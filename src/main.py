@@ -1,34 +1,71 @@
-import requests
-import json
+import logging
+import sys
+import argparse
 
-from letterboxd.parser import getMoviesFromLetterboxdList
+from letterboxd.list import requestWatchlist
+from radarr.radarr import Radarr # todo change this bullshit
 
-LETTERBOXD_BASE_URL = "https://letterboxd.com"
-LETTERBOXD_USER = "jorg3"
-LETTERBOXD_LIST = "watchlist"
-TARGET_URL = f"{LETTERBOXD_BASE_URL}/{LETTERBOXD_USER}/{LETTERBOXD_LIST}/page/1"
+parser = argparse.ArgumentParser()
 
-FLARESOLVERR_PORT = 8191
-FLARESOLVERR_ADDR = "127.0.0.1"
+def parse_arguments():
+    parser = argparse.ArgumentParser(
+        description="Import your Letterboxd watchlist into Radarr",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  %(prog)s --user jorg3
+  %(prog)s --user jorg3 --dry-run
+  %(prog)s --user jorg3 --config /path/to/config.ini
+  %(prog)s --help
+        """
+    )
+    
+    parser.add_argument(
+        '--user', 
+        '-u',
+        type=str,
+        required=True,
+        help='Letterboxd username to import watchlist from'
+    )
+    
+    parser.add_argument(
+        '--dry_run', 
+        '-d',
+        action='store_true',
+        help='Perform a dry run without actually adding movies to Radarr'
+    )
+    
+    return parser.parse_args()
 
-try:
-    url = f"http://{FLARESOLVERR_ADDR}:{FLARESOLVERR_PORT}/v1"
-    headers = {"Content-Type": "application/json"}
-    data = {
-        "cmd": "request.get",
-        "url": TARGET_URL,
-        "maxTimeout": 60000
-    }
-    response = requests.post(url, headers=headers, json=data)
+logger = logging.getLogger("letterboxd2radarr")
+file_handler = logging.FileHandler(filename='tmp.log')
+stdout_handler = logging.StreamHandler(stream=sys.stdout)
 
-    if response.status_code == 200:
-        # keys are 'status', 'message', 'solution', 'startTimestamp', 'endTimestamp' and 'version'
-        data = response.json()        
-        
-        page = data['solution']['response']
+def main():
+    args = parse_arguments()
 
-        print(getMoviesFromLetterboxdList(page))
+    logging.basicConfig(
+        level = logging.INFO,
+        handlers = [file_handler, stdout_handler],
+        format='[%(asctime)s] %(name)s {%(filename)s:%(lineno)d} %(levelname)s - %(message)s',
+    )
+    logger.info("Starting up")
 
-except requests.exceptions.RequestException as exp:
-    print(f"An error as occured: {exp}")
-    pass
+    print(args.dry_run)
+    
+    radarr = Radarr(dry_run = args.dry_run)
+
+    logger.info(f"Requesting watchlist for user {args.user}")
+    movies = requestWatchlist(args.user)
+
+    if not len(movies):
+        logger.error("No movies found in that watchlist")
+        exit(1)
+
+    logger.info("Adding movies to radarr now")
+    for movie in movies:
+        logger.info(f"Searching for {movie.name}")
+        radarr.searchMovieAndAdd(movie.name)
+
+if __name__ == '__main__':
+    main()

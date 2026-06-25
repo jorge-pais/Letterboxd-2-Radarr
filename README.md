@@ -17,10 +17,13 @@ Perhaps in the future I'll try and follow that server approach, as it seems simp
     - [Regular lists](https://letterboxd.com/screeny05/list/jackie-chan-the-definitive-list/)
 - [x] Search and add movies to radarr
 - [x] Command line interface
+    - [ ] Search and add movies from watchlist
+    - [ ] do the same from regular lists (and things like directors e.t.c)
 - [ ] Configuration file for reading api keys and endpoints
+    - [ ] Pass the same parameters via env variables for example
 - [ ] Use database to keep track of sync status between the two
-- [ ] Docker image (?)
 - [ ] Web server for radarr import list support (?)
+    - I think this isn't a really import feature, but either way
 
 ## Development log
 
@@ -30,7 +33,17 @@ But for example, Fly me to the moon (2024) has two entries on radarr, and due to
 
 Also for some reason, the documentary [_Frogs and How They Live_](https://letterboxd.com/film/frogs-and-how-they-live/), which I am very happy to add to my radarr list. These issues seemed to be solved by adding the first movie that matched with the query. This still has some issues as the name for each film may be different (for e.g. the title on radarr being translated, and thus differing from letterboxd). Also there are movies where the year is incorrect, most times due to the regional releases.
 
-## Running flaresolverr
+## Running
+
+To run the main program I recommend using `uv`:
+
+```bash
+uv run src/main.py -u jorg3
+```
+
+This should create a virtual environement and pull all the necessary dependencies in one go (i think).
+
+Then in order to run flaresolverr, you need the container image from running on a endpoint accessible from your host. You may run the container using the following:
 
 ```bash
 podman run -d \

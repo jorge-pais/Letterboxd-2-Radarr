@@ -47,3 +47,6 @@ def getNumberOfPagesFromLetterboxd(list_html: str):
         
     return int(last)
 
+def getTMDBfromLetterboxdMovie(movie_url: str):
+    soup = BeautifulSoup(movie_url, 'html.parser')
+

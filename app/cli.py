@@ -2,47 +2,30 @@ import logging
 import sys
 import argparse
 
+import typer
+
 from .letterboxd import requestWatchlist
 from .radarr import Radarr # todo change this bullshit
 
 parser = argparse.ArgumentParser()
 
-def parse_arguments():
-    parser = argparse.ArgumentParser(
-        description="Import your Letterboxd watchlist into Radarr",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-Examples:
-  %(prog)s --user jorg3
-  %(prog)s --user jorg3 --dry-run
-  %(prog)s --user jorg3 --config /path/to/config.ini
-  %(prog)s --help
-        """
-    )
-    
-    parser.add_argument(
-        '--user', 
-        '-u',
-        type=str,
-        required=True,
-        help='Letterboxd username to import watchlist from'
-    )
-    
-    parser.add_argument(
-        '--dry_run', 
-        '-d',
-        action='store_true',
-        help='Perform a dry run without actually adding movies to Radarr'
-    )
-    
-    return parser.parse_args()
+app = typer.Typer(
+    add_completion=False,
+    no_args_is_help=True
+)
 
 logger = logging.getLogger("letterboxd2radarr")
 file_handler = logging.FileHandler(filename='tmp.log')
 stdout_handler = logging.StreamHandler(stream=sys.stdout)
 
-def app():
-    args = parse_arguments()
+@app.command()
+def watchlist(
+    user: str = typer.Argument(None, 
+        help="User name to scrape"), 
+    dry_run: bool = typer.Option(False, "--dry-run", 
+        help="Scrapes letterboxd and won't add anything to radarr")
+) -> None:
+    """Scrape a user's watchlist from letterboxd and import it into radarr"""
 
     logging.basicConfig(
         level = logging.INFO,
@@ -51,12 +34,10 @@ def app():
     )
     logger.info("Starting up")
 
-    print(args.dry_run)
-    
-    radarr = Radarr(dry_run = args.dry_run)
+    radarr = Radarr(dry_run = dry_run)
 
-    logger.info(f"Requesting watchlist for user {args.user}")
-    movies = requestWatchlist(args.user)
+    logger.info(f"Requesting watchlist for user {user}")
+    movies = requestWatchlist(user)
 
     if not len(movies):
         logger.error("No movies found in that watchlist")
@@ -66,6 +47,11 @@ def app():
     for movie in movies:
         logger.info(f"Searching for {movie.name}")
         radarr.searchMovieAndAdd(movie.name)
+
+@app.command()
+def list(url: str):
+    """*not implemented yet*"""
+    pass
 
 def main() -> None:
     app()

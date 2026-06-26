@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import logging
 
-from letterboxd.movie import Movie
+from .movie import Movie
 
 logger = logging.getLogger("letterboxd2radarr")
 

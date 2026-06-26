@@ -2,8 +2,8 @@ import logging
 import sys
 import argparse
 
-from letterboxd.list import requestWatchlist
-from radarr.radarr import Radarr # todo change this bullshit
+from .letterboxd import requestWatchlist
+from .radarr import Radarr # todo change this bullshit
 
 parser = argparse.ArgumentParser()
 
@@ -41,7 +41,7 @@ logger = logging.getLogger("letterboxd2radarr")
 file_handler = logging.FileHandler(filename='tmp.log')
 stdout_handler = logging.StreamHandler(stream=sys.stdout)
 
-def main():
+def app():
     args = parse_arguments()
 
     logging.basicConfig(
@@ -66,6 +66,9 @@ def main():
     for movie in movies:
         logger.info(f"Searching for {movie.name}")
         radarr.searchMovieAndAdd(movie.name)
+
+def main() -> None:
+    app()
 
 if __name__ == '__main__':
     main()

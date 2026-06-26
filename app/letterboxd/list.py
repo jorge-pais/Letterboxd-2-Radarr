@@ -1,8 +1,8 @@
 import logging
 
-from letterboxd.movie import Movie
-from letterboxd.parser import getMoviesFromLetterboxdWatchlist, getNumberOfPagesFromLetterboxd
-from flaresolverr.request import sendGetRequest
+from .movie import Movie
+from .parser import getMoviesFromLetterboxdWatchlist, getNumberOfPagesFromLetterboxd
+from ..flaresolverr import sendGetRequest # how do I solve this
 
 logger = logging.getLogger("letterboxd2radarr")
 
@@ -15,6 +15,8 @@ def requestWatchlist(user: str):
     watchlist_page = sendGetRequest(url)
     if not watchlist_page:
         return []
+
+    logger.debug(f"Webpage \n {watchlist_page}")
 
     movies = getMoviesFromLetterboxdWatchlist(watchlist_page)
     pages = getNumberOfPagesFromLetterboxd(watchlist_page)

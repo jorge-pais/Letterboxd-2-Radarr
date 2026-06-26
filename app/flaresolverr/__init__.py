@@ -1,5 +1,5 @@
-from .request import sendGetRequest
+from .flaresolverr import Flaresolverr
 
 __all__ = [
-    "sendGetRequest"
+    "Flaresolverr"
 ]

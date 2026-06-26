@@ -2,17 +2,17 @@ import logging
 
 from .movie import Movie
 from .parser import getMoviesFromLetterboxdWatchlist, getNumberOfPagesFromLetterboxd
-from ..flaresolverr import sendGetRequest # how do I solve this
+from ..flaresolverr import Flaresolverr # how do I solve this
 
 logger = logging.getLogger("letterboxd2radarr")
 
 LETTERBOXD_BASE_URL = "https://letterboxd.com"
 
-def requestWatchlist(user: str):
+def requestWatchlist(user: str, flare: Flaresolverr):
     url = f"{LETTERBOXD_BASE_URL}/{user}/watchlist"
     
     logger.info(f"Sending request for watchlist page")
-    watchlist_page = sendGetRequest(url)
+    watchlist_page = flare.request_url(url)
     if not watchlist_page:
         return []
 
@@ -25,7 +25,7 @@ def requestWatchlist(user: str):
         for page in range(2, pages + 1):
             logger.info(f"Sending request for watchlist page {page}")
             url = f"{LETTERBOXD_BASE_URL}/{user}/watchlist/page/{page}"
-            watchlist_page = sendGetRequest(url)
+            watchlist_page = flare.request_url(url)
             if not watchlist_page:
                 break
 

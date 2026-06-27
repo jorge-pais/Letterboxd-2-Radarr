@@ -5,8 +5,8 @@ from arrapi import RadarrAPI, Movie, QualityProfile, RootFolder
 logger = logging.getLogger("letterboxd2radarr")
 
 RADARR_API_KEY = "869ac6eb678d49d49a35451c7eb8d244"
-# RADARR_ADDR = "http://localhost:7878"
-RADARR_ADDR = "http://192.168.1.186:7878"
+RADARR_ADDR = "http://localhost:7878"
+# RADARR_ADDR = "http://192.168.1.186:7878"
 TARGET_PROFILE = "HD-1080p"
 
 class Radarr:

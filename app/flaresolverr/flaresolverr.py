@@ -13,14 +13,11 @@ class Flaresolverr:
     """This is responsible for a single flaresolverr session"""
 
     session_id : str = ""
-    flareUrl = f"http://127.0.0.1:8191/v1"
+    flareUrl = f""
 
-    def __init__(self):
-        """
-        this is very much an anti pattern in c++, 
-        but both the constructor and the destructor may call exceptions
-        """
-        # self.flareUrl = f"{addr}:{port}/v1"
+    def __init__(self, addr = "http://127.0.0.1", port = 8191):
+        self.flareUrl = f"{addr}:{port}/v1"
+
         self._create_session()
 
         if not self.session_id:
@@ -29,7 +26,6 @@ class Flaresolverr:
     def __del__(self):
         self._destroy_session()
 
-    # def sendGetRequest(self, url: str) -> str:
     def request_url(self, url: str) -> str:
         data = {
             "cmd": "request.get",

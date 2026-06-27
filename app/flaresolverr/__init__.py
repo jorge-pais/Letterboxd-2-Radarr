@@ -1,5 +1,6 @@
-from .flaresolverr import Flaresolverr
+from .flaresolverr import Flaresolverr, FlaresolverrException
 
 __all__ = [
-    "Flaresolverr"
+    "Flaresolverr",
+    "FlaresolverrException"
 ]

@@ -8,7 +8,7 @@ I am of course in favour that most bots, nowadays should piss off the internet. 
 
 This project implements a simple webscrapper for letterboxd, being that all the requests are processed through flaresolverr in order to avoid 403 forbidden from the website. Unlike letterboxd-list-radarr, which exposes a webserver for radarr to connect to thourgh the import lists feature, I want this to be more like a cli tool that I can launch and have this sync automatically (like in a cron job within my arr stack).
 
-Perhaps in the future I'll try and follow that server approach, as it seems simpler to configure. There seems to be a lack of documentation on how [custom lists](https://wiki.servarr.com/radarr/supported#radarrlistimport) work on radarr, and I didn't want to go read the typescript source code for the other project.  
+Perhaps in the future I'll try and follow that server approach, as it seems simpler to configure. There seems to be a lack of documentation on how [custom lists](https://wiki.servarr.com/radarr/supported#radarrlistimport) work on radarr, and I didn't want to go read the typescript source code for the other project. Also I don't want to use the [letterboxdpy](https://pypi.org/project/letterboxdpy/) package (which would probably save me the trouble of using flaresolverr and writting my own bespoke scraper)
 
 ## Features
 
@@ -42,13 +42,13 @@ I think it takes a really long time for flaresolverr to process all the requests
 
 > Analysis: each watchlist request is taking about 11 sec to complete. This totals to 1min53sec for a ~250 movie watchlist of 10 pages
 >
-> *Solution*: Use flaresolverr sessions in order to preserve cloudflare cookies. First request still takes about 11sec, but subsequent requests will take about 800-1000ms
+> *Solution*: Use flaresolverr sessions in order to preserve cloudflare cookies. First request still takes about 11sec, but subsequent requests will take about 800-1000ms. Total time (with the radarr request which were not accounted for in the previous measurement): 32.3 sec
 
 ### Wrong dates
 
-So I've noticed that letterboxd has wrong dates on their pages. For example, Catarina Vasconcelos' The Metamophosis of Birds, shows up as released in 2020, meanwhile in TMDB (which I think is the main source for radarr search) it shows up as released in 2021.
+So I've noticed that letterboxd has wrong dates on their pages. For example, Catarina Vasconcelos' The Metamophosis of Birds, shows up as released in 2020, meanwhile in TMDB (which I think is the main source for radarr search) it shows up as released in 2021. This is an issue as we're searching using `'{name} ({year})'` which should yield wrong results.
 
-This is an issue as we're searching using `'{name} ({year})'` which should yield wrong results. 
+To solve this I think I'll use a sqlite database. First syncing what movies I have on letterboxd watchlist (each list should be it's own table), and then cross referencing with radarr.
 
 ## Running
 

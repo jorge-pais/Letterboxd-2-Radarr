@@ -1,6 +1,8 @@
 import logging
 import requests
 
+from ..config import Config
+
 logger = logging.getLogger("letterboxd2radarr")
 
 FLARESOLVERR_ADDR = "http://127.0.0.1:8191"
@@ -15,8 +17,8 @@ class Flaresolverr:
     session_id : str = ""
     flareUrl = f""
 
-    def __init__(self, addr = "http://127.0.0.1", port = 8191):
-        self.flareUrl = f"{addr}:{port}/v1"
+    def __init__(self, config : Config.Flaresolverr):
+        self.flareUrl = f"{config.addr}:{config.port}/v1"
 
         self._create_session()
 
@@ -49,7 +51,7 @@ class Flaresolverr:
     def _create_session(self):
         data = {
             "cmd": "sessions.create",
-            "maxTimeout": 60000
+            "maxTimeout": DEFAULT_TIMEOUT
         }
 
         response = self._send_request(data)
@@ -66,7 +68,7 @@ class Flaresolverr:
 
         data = {
             "cmd": "sessions.destroy",
-            "maxTimeout": 60000,
+            "maxTimeout": DEFAULT_TIMEOUT,
             "session": self.session_id
         }
 

@@ -7,6 +7,8 @@ from .letterboxd import requestWatchlist
 from .radarr import Radarr 
 from .flaresolverr import Flaresolverr
 
+from .config import Config
+
 app = typer.Typer(
     add_completion=False,
     no_args_is_help=True,
@@ -28,8 +30,11 @@ def watchlist(
 
     logger.info("Starting up")
 
-    radarr = Radarr(dry_run = dry_run)
-    flaresolverr = Flaresolverr()
+    config = Config.load()
+    print(config)
+
+    radarr = Radarr(config.radarr, dry_run = dry_run)
+    flaresolverr = Flaresolverr(config.flaresolverr)
 
     logger.info(f"Requesting watchlist for user {user}")
     movies = requestWatchlist(user, flaresolverr)
@@ -47,6 +52,17 @@ def watchlist(
 def list(url: str):
     """*not implemented yet*"""
     pass
+
+@app.command()
+def config_test():
+    config = Config.load()
+    print(config)
+    # example for how to load the config 
+    config = Config.load(
+        radarr={"api_key": "aaa"},
+        flaresolverr={"port": 1234}
+    )
+    print(config)
 
 def main() -> None:
     logging.basicConfig(

@@ -7,6 +7,11 @@ logger = logging.getLogger("letterboxd2radarr")
 
 LETTERBOXD_BASE_URL = "https://letterboxd.com"
 
+class Letterboxd:
+    def __init__(self):
+        pass
+    pass
+
 def getMoviesFromLetterboxdWatchlist(list_html: str):
     # i don't know if it is a good idea to have this initialized everywhere
     soup = BeautifulSoup(list_html, 'html.parser')
@@ -18,9 +23,9 @@ def getMoviesFromLetterboxdWatchlist(list_html: str):
     for item in items:
         poster = item.find('div', class_='react-component')
         if poster:
-            film_name = poster.get('data-item-full-display-name', '')
-            film_id = poster.get('data-film-id', '')
-            film_rel_url = poster.get('data-item-link', '')
+            film_name = str(poster.get('data-item-full-display-name') or '')
+            film_id = str(poster.get('data-film-id') or '')
+            film_rel_url = str(poster.get('data-item-link') or '')
 
             movie = Movie(
                 name = film_name, 
@@ -47,6 +52,6 @@ def getNumberOfPagesFromLetterboxd(list_html: str):
         
     return int(last)
 
-def getTMDBfromLetterboxdMovie(movie_url: str):
-    soup = BeautifulSoup(movie_url, 'html.parser')
 
+def getIndividualMovieInfo():
+    pass

@@ -4,6 +4,34 @@ This project is presented as an alternative to [letterboxd-list-radarr](https://
 
 I am of course in favour that most bots, nowadays should piss off the internet. It would make sense for letterboxd to be more liberal with their API and the keys they give out. As of right now, their API terms make it clear that no personal project shall use this interface.
 
+## Running
+
+To run the main program I recommend using `uv`:
+
+```bash
+uv run letterboxd-2-radarr watchlist jorg3
+uv run letterboxd-2-radarr watchlist jorg3 --dry-run
+```
+
+This should create a virtual environement and pull all the necessary dependencies in one go (i think).
+
+### Configuration
+
+Copy the configuration file to your config directory: `~/.config/letterboxd2radarr/config.toml`. Change the configuration accordingly
+
+### Flaresolverr
+
+Then in order to run flaresolverr, you need the container image from running on a endpoint accessible from your host. You may run the container using the following:
+
+```bash
+podman run -d \
+  --name=flaresolverr \
+  -p 8191:8191 \
+  -e LOG_LEVEL=info \
+  --restart unless-stopped \
+  ghcr.io/flaresolverr/flaresolverr:latest
+```
+
 ## Motivation and goals
 
 This project implements a simple webscrapper for letterboxd, being that all the requests are processed through flaresolverr in order to avoid 403 forbidden from the website. Unlike letterboxd-list-radarr, which exposes a webserver for radarr to connect to thourgh the import lists feature, I want this to be more like a cli tool that I can launch and have this sync automatically (like in a cron job within my arr stack).
@@ -44,30 +72,14 @@ I think it takes a really long time for flaresolverr to process all the requests
 >
 > *Solution*: Use flaresolverr sessions in order to preserve cloudflare cookies. First request still takes about 11sec, but subsequent requests will take about 800-1000ms. Total time (with the radarr request which were not accounted for in the previous measurement): 32.3 sec
 
-### Wrong dates
+### Mismatched dates and titles
 
-So I've noticed that letterboxd has wrong dates on their pages. For example, Catarina Vasconcelos' The Metamophosis of Birds, shows up as released in 2020, meanwhile in TMDB (which I think is the main source for radarr search) it shows up as released in 2021. This is an issue as we're searching using `'{name} ({year})'` which should yield wrong results.
+So I've noticed that letterboxd has wrong dates on their pages. For example, Catarina Vasconcelos' The Metamophosis of Birds, shows up as released in 2020, meanwhile in TMDB (which I think is the main source for radarr search) it shows up as released in 2021. This is an issue as we're searching using `'{name} ({year})'` which should yield wrong results. 
 
-To solve this I think I'll use a sqlite database. First syncing what movies I have on letterboxd watchlist (each list should be it's own table), and then cross referencing with radarr.
+This also may happen for differences in titles. I learned that the actually title for the 2026 Emerald Fennell film is "Wuthering Heights", which includes the actual quotes. So in letterboxd they don't use the quotes in the title, meanwhile tmdb is using them.
 
-## Running
+To solve this I think I'll use a sqlite database. First syncing what movies I have on letterboxd watchlist (each list should be it's own table), and then cross referencing with radarr. I think that this could be done on a lowest effort apporach (so use the least requests possible). When a movie fails to search, we could fetch the tmdb from the letterboxd page.
 
-To run the main program I recommend using `uv`:
+### Adding configuration
 
-```bash
-uv run letterboxd-2-radarr watchlist jorg3
-uv run letterboxd-2-radarr watchlist jorg3 --dry-run
-```
-
-This should create a virtual environement and pull all the necessary dependencies in one go (i think).
-
-Then in order to run flaresolverr, you need the container image from running on a endpoint accessible from your host. You may run the container using the following:
-
-```bash
-podman run -d \
-  --name=flaresolverr \
-  -p 8191:8191 \
-  -e LOG_LEVEL=info \
-  --restart unless-stopped \
-  ghcr.io/flaresolverr/flaresolverr:latest
-```
+I implemented a nested dataclass structure which was inspired by a C++ project that I had done while working at BMW. I don't think it really works in the python OOP model. 

@@ -1,13 +1,9 @@
 import logging
-
 from arrapi import RadarrAPI, Movie, QualityProfile, RootFolder
 
-logger = logging.getLogger("letterboxd2radarr")
+from ..config import Config
 
-RADARR_API_KEY = "869ac6eb678d49d49a35451c7eb8d244"
-RADARR_ADDR = "http://localhost:7878"
-# RADARR_ADDR = "http://192.168.1.186:7878"
-TARGET_PROFILE = "HD-1080p"
+logger = logging.getLogger("letterboxd2radarr")
 
 class Radarr:
     radarr : RadarrAPI
@@ -15,9 +11,10 @@ class Radarr:
     root_folder : RootFolder
     dry_run : bool
 
-    def __init__(self, addr = RADARR_ADDR, api_key = RADARR_API_KEY, dry_run = False):
-        self.radarr = RadarrAPI(addr, api_key)
-        self.quality_profile = [p for p in self.radarr.quality_profile() if p.name == TARGET_PROFILE][0]
+    def __init__(self, config : Config.Radarr, dry_run = False):
+        radarr_url = f"{config.addr}:{config.port}"
+        self.radarr = RadarrAPI(radarr_url, config.api_key)
+        self.quality_profile = [p for p in self.radarr.quality_profile() if p.name == config.profile][0]
         self.root_folder = self.radarr.root_folder()[0]
         self.dry_run = dry_run
 

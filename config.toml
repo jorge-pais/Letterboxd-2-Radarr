@@ -1,0 +1,12 @@
+[radarr]
+addr = "http://localhost"
+port = 7878
+api_key = "869ac6eb678d49d49a35451c7eb8d244"
+target_profile = "HD-1080p"
+
+[flaresolverr]
+addr = "http://localhost"
+port = 8191
+
+[letterboxd]
+base_url="https://letterboxd.com"

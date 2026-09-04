@@ -47,7 +47,7 @@ Perhaps in the future I'll try and follow that server approach, as it seems simp
 - [x] Command line interface
     - [ ] Search and add movies from watchlist
     - [ ] do the same from regular lists (and things like directors e.t.c)
-- [ ] Configuration file for reading api keys and endpoints
+- [x] Configuration file for reading api keys and endpoints
     - [ ] Pass the same parameters via env variables for example
     - [ ] Override parameters via command line options (should be easy using typer)
 - [ ] Use database to keep track of sync status between the two

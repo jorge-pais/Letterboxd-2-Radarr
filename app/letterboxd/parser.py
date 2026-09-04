@@ -7,11 +7,6 @@ logger = logging.getLogger("letterboxd2radarr")
 
 LETTERBOXD_BASE_URL = "https://letterboxd.com"
 
-class Letterboxd:
-    def __init__(self):
-        pass
-    pass
-
 def getMoviesFromLetterboxdWatchlist(list_html: str):
     # i don't know if it is a good idea to have this initialized everywhere
     soup = BeautifulSoup(list_html, 'html.parser')
@@ -53,5 +48,9 @@ def getNumberOfPagesFromLetterboxd(list_html: str):
     return int(last)
 
 
-def getIndividualMovieInfo():
+def getIndividualMovieInfo(movie_html: str):
+    soup = BeautifulSoup(movie_html, 'html.parser')
+
+    items = soup.find_all('a', class_='micro-button track-event')
+
     pass

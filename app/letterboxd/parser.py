@@ -53,4 +53,6 @@ def getIndividualMovieInfo(movie_html: str):
 
     items = soup.find_all('a', class_='micro-button track-event')
 
+    print(items)
+
     pass

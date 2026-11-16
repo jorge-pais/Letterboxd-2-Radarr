@@ -3,7 +3,7 @@ import sys
 
 import typer
 
-from .letterboxd import requestWatchlist
+from .letterboxd import requestWatchlist, requestMovie
 from .radarr import Radarr 
 from .flaresolverr import Flaresolverr
 
@@ -63,6 +63,19 @@ def config_test():
         flaresolverr={"port": 1234}
     )
     print(config)
+
+@app.command()
+def movie_parse_test():
+
+    config = Config.load()
+    print(config)
+
+    flaresolverr = Flaresolverr(config.flaresolverr)
+
+    requestMovie("https://letterboxd.com/film/louis-theroux-the-settlers/", flaresolverr)
+    
+
+    pass
 
 def main() -> None:
     logging.basicConfig(

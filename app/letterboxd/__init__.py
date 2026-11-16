@@ -1,13 +1,16 @@
 from .list import requestWatchlist
-from .movie import Movie
+from .movie import Movie, requestMovie
 from .parser import (
     getMoviesFromLetterboxdWatchlist,
-    getNumberOfPagesFromLetterboxd
+    getNumberOfPagesFromLetterboxd,
+    getIndividualMovieInfo
 )
 
 __all__ = [
     "requestWatchlist",
+    "requestMovie",
     "Movie",
     "getNumberOfPagesFromLetterboxd",
-    "getMoviesFromLetterboxdWatchlist"
+    "getMoviesFromLetterboxdWatchlist",
+    "getIndividualMovieInfo"
 ]
